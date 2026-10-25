@@ -1,4 +1,4 @@
-[![Todo List CI](https://github.com/adhinaik13/TodoList-Management-Application/actions/workflows/ci.yml/badge.svg)](https://github.com/adhinaik13/TodoList-Management-Application/actions/workflows/ci.yml)
+[![Todo List CI](https://github.com/vankudothuadhinaik/TodoList-Management-Application/actions/workflows/ci.yml/badge.svg)](https://github.com/vankudothuadhinaik/TodoList-Management-Application/actions/workflows/ci.yml)
 
 # Todo List Management Application
 
