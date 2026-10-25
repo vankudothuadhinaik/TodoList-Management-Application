@@ -10,7 +10,7 @@ A responsive React task manager focused on a clean workflow and accessible inter
 - Mark tasks complete or active
 - Filter tasks by all, active, or completed
 - Delete individual tasks and clear completed tasks
-- Live active/completed counts and helpful empty states
+- Live active/completed counts and helpful empty states\n- Automatic browser-local persistence across refreshes and remounts\n- Safe fallback to an empty list if stored data is invalid or browser storage is unavailable
 - Accessible names for form controls and task actions
 - Responsive layout for desktop and mobile
 
@@ -42,4 +42,4 @@ GitHub Actions runs the test suite and production build on pushes and pull reque
 
 ## Scope and limitations
 
-This is a front-end learning project. Tasks are stored only in React state and are cleared when the page is refreshed. It has no backend, account system, or cross-device persistence.
+This is a front-end learning project. Tasks persist in the current browser using localStorage, but there is no backend, account system, synchronization, or cross-device persistence. Clearing the browser's site data removes saved tasks.
