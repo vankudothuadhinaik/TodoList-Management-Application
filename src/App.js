@@ -1,12 +1,42 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import TodoList from "./Todolist";
 import "./App.css";
 
+const STORAGE_KEY = "todo-list-management.tasks";
+
+function loadSavedTodos() {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (todo) =>
+        todo &&
+        Number.isSafeInteger(todo.id) &&
+        todo.id > 0 &&
+        typeof todo.text === "string" &&
+        typeof todo.completed === "boolean"
+    );
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   const [task, setTask] = useState("");
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(loadSavedTodos);
   const [filter, setFilter] = useState("all");
   const nextId = useRef(1);
+
+  useEffect(() => {
+    nextId.current = todos.reduce((maxId, todo) => Math.max(maxId, todo.id), 0) + 1;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    } catch {
+      // The app remains usable if storage is unavailable or full.
+    }
+  }, [todos]);
 
   const completedCount = todos.filter((todo) => todo.completed).length;
   const activeCount = todos.length - completedCount;
@@ -111,7 +141,7 @@ function App() {
         )}
 
         <footer className="app-footer">
-          Tasks stay in this page session and reset when the page is refreshed.
+          Tasks are saved in this browser on this device. Clearing site data removes them.
         </footer>
       </section>
     </main>
