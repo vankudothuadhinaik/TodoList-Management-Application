@@ -1,3 +1,5 @@
+[![Todo List CI](https://github.com/adhinaik13/TodoList-Management-Application/actions/workflows/ci.yml/badge.svg)](https://github.com/adhinaik13/TodoList-Management-Application/actions/workflows/ci.yml)
+
 # Todo List Management Application
 
 A responsive React task manager focused on a clean workflow and accessible interactions.
