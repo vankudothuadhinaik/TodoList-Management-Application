@@ -1,39 +1,120 @@
-import React,{useState} from 'react'
-import TodoList from './Todolist'; 
+import React, { useMemo, useRef, useState } from "react";
+import TodoList from "./Todolist";
 import "./App.css";
+
 function App() {
   const [task, setTask] = useState("");
   const [todos, setTodos] = useState([]);
-  const changeHandler = e => {
-    setTask(e.target.value);
-  }
-  const submitHandler = e => {
-    e.preventDefault(); 
-    if (task.trim() === "") return;
-    const newTodos = [...todos, task];
-    setTodos(newTodos);
-    setTask("");
-  }  
+  const [filter, setFilter] = useState("all");
+  const nextId = useRef(1);
 
-  const deleteHandler=(indexValue) =>{
-    const newTodos =todos.filter((todo,index) => index!==indexValue); 
-    setTodos(newTodos);
+  const completedCount = todos.filter((todo) => todo.completed).length;
+  const activeCount = todos.length - completedCount;
+
+  const visibleTodos = useMemo(
+    () => todos.filter((todo) => {
+      if (filter === "active") return !todo.completed;
+      if (filter === "completed") return todo.completed;
+      return true;
+    }),
+    [todos, filter]
+  );
+
+  function submitHandler(event) {
+    event.preventDefault();
+    const text = task.trim();
+    if (!text) return;
+    setTodos((current) => [...current, { id: nextId.current++, text, completed: false }]);
+    setTask("");
+    setFilter("all");
   }
+
+  function toggleHandler(id) {
+    setTodos((current) => current.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  }
+
+  function deleteHandler(id) {
+    setTodos((current) => current.filter((todo) => todo.id !== id));
+  }
+
+  function clearCompleted() {
+    setTodos((current) => current.filter((todo) => !todo.completed));
+  }
+
   return (
-    <div>
-      <center>
-        <div className='card'>
-          <div className='card-body'>
-            <h5 className='card-title'>Todo Management Application</h5>
-            <form onSubmit={submitHandler}>
-              <input type='text' name='task' value={task} onChange={changeHandler} /> &nbsp;&nbsp;
-              <input type='submit' value='Add' name='Add' />
-            </form>
-            <TodoList listtodo={todos} deleteHandler={deleteHandler} />
+    <main className="app-shell">
+      <section className="app-card" aria-labelledby="app-title">
+        <p className="eyebrow">FOCUS · ONE TASK AT A TIME</p>
+        <header className="app-header">
+          <div>
+            <h1 id="app-title">Your tasks, under control.</h1>
+            <p className="subtitle">Make a list. Make progress. Repeat.</p>
           </div>
+          <div className="task-total" aria-label={`${todos.length} total tasks`}>
+            <strong>{todos.length}</strong>
+            <span>Total</span>
+          </div>
+        </header>
+
+        <form className="task-form" onSubmit={submitHandler}>
+          <label className="sr-only" htmlFor="task-input">Add a task</label>
+          <input
+            id="task-input"
+            name="task"
+            type="text"
+            value={task}
+            onChange={(event) => setTask(event.target.value)}
+            placeholder="What needs to get done?"
+            maxLength={200}
+            autoComplete="off"
+          />
+          <button type="submit" className="primary-button">Add task</button>
+        </form>
+
+        <div className="task-summary" aria-live="polite">
+          <span>{activeCount} active</span>
+          <span className="summary-dot" aria-hidden="true">·</span>
+          <span>{completedCount} completed</span>
         </div>
-      </center>
-    </div>
+
+        <div className="list-toolbar">
+          <div className="filter-group" role="group" aria-label="Filter tasks">
+            {["all", "active", "completed"].map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={filter === option ? "filter-button selected" : "filter-button"}
+                aria-pressed={filter === option}
+                onClick={() => setFilter(option)}
+              >
+                {option[0].toUpperCase() + option.slice(1)}
+              </button>
+            ))}
+          </div>
+          {completedCount > 0 && (
+            <button type="button" className="text-button" onClick={clearCompleted}>
+              Clear completed
+            </button>
+          )}
+        </div>
+
+        {visibleTodos.length > 0 ? (
+          <TodoList listtodo={visibleTodos} onToggle={toggleHandler} onDelete={deleteHandler} />
+        ) : (
+          <div className="empty-state">
+            <span className="empty-icon" aria-hidden="true">✓</span>
+            <p>{todos.length === 0 ? "A clear list is a fresh start." : `No ${filter} tasks right now.`}</p>
+            <span>{todos.length === 0 ? "Add your first task above." : "Choose another filter to see more tasks."}</span>
+          </div>
+        )}
+
+        <footer className="app-footer">
+          Tasks stay in this page session and reset when the page is refreshed.
+        </footer>
+      </section>
+    </main>
   );
 }
 
