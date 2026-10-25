@@ -1,7 +1,9 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import App from "./App";
 
-describe("Todo management", () => {\n  beforeEach(() => window.localStorage.clear());\n  afterEach(() => { cleanup(); window.localStorage.clear(); });
+describe("Todo management", () => {
+  beforeEach(() => window.localStorage.clear());
+  afterEach(() => { cleanup(); window.localStorage.clear(); });
   test("renders the task manager and empty state", () => {
     render(<App />);
     expect(screen.getByRole("heading", { name: /your tasks, under control/i })).toBeInTheDocument();
@@ -18,7 +20,19 @@ describe("Todo management", () => {\n  beforeEach(() => window.localStorage.clea
     expect(screen.getByText("1 active")).toBeInTheDocument();
   });
 
-  test("restores tasks from browser storage after remount", () => {\n    const firstRender = render(<App />);\n    fireEvent.change(screen.getByRole("textbox", { name: /add a task/i }), {\n      target: { value: "Persist this task" },\n    });\n    fireEvent.click(screen.getByRole("button", { name: /add task/i }));\n    expect(window.localStorage.getItem("todo-list-management.tasks")).toContain("Persist this task");\n    firstRender.unmount();\n    render(<App />);\n    expect(screen.getByText("Persist this task")).toBeInTheDocument();\n  });\n\n  test("does not add an empty task", () => {
+  test("restores tasks from browser storage after remount", () => {
+    const firstRender = render(<App />);
+    fireEvent.change(screen.getByRole("textbox", { name: /add a task/i }), {
+      target: { value: "Persist this task" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /add task/i }));
+    expect(window.localStorage.getItem("todo-list-management.tasks")).toContain("Persist this task");
+    firstRender.unmount();
+    render(<App />);
+    expect(screen.getByText("Persist this task")).toBeInTheDocument();
+  });
+
+  test("does not add an empty task", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /add task/i }));
     expect(screen.queryByRole("list", { name: /tasks/i })).not.toBeInTheDocument();
