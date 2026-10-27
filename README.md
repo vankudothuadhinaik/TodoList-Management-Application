@@ -10,7 +10,9 @@ A responsive React task manager focused on a clean workflow and accessible inter
 - Mark tasks complete or active
 - Filter tasks by all, active, or completed
 - Delete individual tasks and clear completed tasks
-- Live active/completed counts and helpful empty states\n- Automatic browser-local persistence across refreshes and remounts\n- Safe fallback to an empty list if stored data is invalid or browser storage is unavailable
+- Live active/completed counts and helpful empty states
+- Automatic browser-local persistence across refreshes and remounts
+- Safe fallback to an empty list if stored data is invalid or browser storage is unavailable
 - Accessible names for form controls and task actions
 - Responsive layout for desktop and mobile
 
