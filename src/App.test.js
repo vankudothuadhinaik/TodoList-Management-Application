@@ -46,7 +46,7 @@ describe("Todo management", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /add task/i }));
     fireEvent.click(screen.getByRole("checkbox", { name: /mark ship feature as completed/i }));
-    expect(screen.getByText("1 active")).toBeInTheDocument();
+    expect(screen.getByText("0 active")).toBeInTheDocument();
     expect(screen.getByText("1 completed")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /^completed$/i }));
     expect(within(screen.getByRole("list", { name: /tasks/i })).getByText("Ship feature")).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe("Todo management", () => {
     expect(screen.getByText("Keep this task")).toBeInTheDocument();
     expect(screen.getByText("Trim this task")).toBeInTheDocument();
     expect(screen.queryByText("Duplicate ID")).not.toBeInTheDocument();
-    expect(screen.getByText("0 active")).toBeInTheDocument();
+    expect(screen.getByText("1 active")).toBeInTheDocument();
     expect(screen.getByText("1 completed")).toBeInTheDocument();
   });
 });
