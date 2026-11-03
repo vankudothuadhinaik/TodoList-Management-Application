@@ -65,4 +65,26 @@ describe("Todo management", () => {
     fireEvent.click(screen.getByRole("button", { name: /clear completed/i }));
     expect(screen.queryByText("Done item")).not.toBeInTheDocument();
   });
+
+  test("ignores duplicate, empty, and oversized tasks restored from storage", () => {
+    window.localStorage.setItem(
+      "todo-list-management.tasks",
+      JSON.stringify([
+        { id: 1, text: "Keep this task", completed: false },
+        { id: 1, text: "Duplicate ID", completed: false },
+        { id: 2, text: "   ", completed: false },
+        { id: 3, text: "x".repeat(201), completed: false },
+        { id: 4, text: "  Trim this task  ", completed: true },
+      ])
+    );
+
+    render(<App />);
+
+    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(screen.getByText("Keep this task")).toBeInTheDocument();
+    expect(screen.getByText("Trim this task")).toBeInTheDocument();
+    expect(screen.queryByText("Duplicate ID")).not.toBeInTheDocument();
+    expect(screen.getByText("0 active")).toBeInTheDocument();
+    expect(screen.getByText("1 completed")).toBeInTheDocument();
+  });
 });
