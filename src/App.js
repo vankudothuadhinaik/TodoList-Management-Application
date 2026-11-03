@@ -10,14 +10,27 @@ function loadSavedTodos() {
     if (!saved) return [];
     const parsed = JSON.parse(saved);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (todo) =>
-        todo &&
-        Number.isSafeInteger(todo.id) &&
-        todo.id > 0 &&
-        typeof todo.text === "string" &&
-        typeof todo.completed === "boolean"
-    );
+
+    const seenIds = new Set();
+    const validTodos = [];
+    for (const todo of parsed) {
+      if (
+        !todo ||
+        !Number.isSafeInteger(todo.id) ||
+        todo.id <= 0 ||
+        typeof todo.text !== "string" ||
+        typeof todo.completed !== "boolean"
+      ) {
+        continue;
+      }
+
+      const text = todo.text.trim();
+      if (!text || text.length > 200 || seenIds.has(todo.id)) continue;
+
+      seenIds.add(todo.id);
+      validTodos.push({ ...todo, text });
+    }
+    return validTodos;
   } catch {
     return [];
   }
